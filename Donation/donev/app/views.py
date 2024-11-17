@@ -1,5 +1,9 @@
 from django.shortcuts import redirect, render
-
+from django.views import View
+from .models import Donor
+from .forms import UserForm,DonorSignupForm
+from django.contrib.auth.models import User
+from django.contrib import messages
 # Create your views here.
 def index(request):
     return render(request, "index.html")
@@ -21,8 +25,34 @@ def login_volunteer(request):
     return render(request, "login-volunteer.html")
 
 
-def signup_donor(request):
-    return render(request, "signup_donor.html")
+class signup_donor(View):
+    def get(self,request):
+      form1 = UserForm()
+      form2 = DonorSignupForm()
+      return render(request, "signup_donor.html",locals())
+    #def get(self,request):
+      return render(request, "signup_donor.html")
+    def post(self,request):
+        form1 = UserForm(request.POST)
+        form2 = DonorSignupForm(request.POST)
+        if form1.is_valid() & form2.is_valid():
+            fn=request.POST["first_name"]
+            ln=request.POST["last_name"]
+            em=request.POST["email"]
+            us=request.POST["username"]
+            pwd=request.POST["password1"]
+            contact=request.POST["contact"]
+            userpic=request.POST["userpic"]
+            address=request.POST["address"]
+
+            try:
+                user = User.objects.create_user(first_name=fn,last_name=ln,username=us,email=em,password=pwd)
+                Donor.objects.create(user=user,contact=contact,userpic=userpic,address=address)
+                messages.success(request,'Congratulations!!Donor Profile Created Successfully')
+            except:
+                messages.warning(request,'Profile Not Created')
+
+        return render(request,"signup_donor.html")
 
 
 def signup_volunteer(request):

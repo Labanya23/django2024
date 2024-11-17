@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -24,7 +26,7 @@ urlpatterns = [
     path("login-admin/", views.login_admin, name="login_admin"),
     path("login-donor/", views.login_donor, name="login_donor"),
     path("login-volunteer/", views.login_volunteer, name="login_volunteer"),
-    path("signup-donor/", views.signup_donor, name="signup_donor"),
+    path("signup-donor/", views.signup_donor.as_view(), name="signup_donor"),
     path("signup-volunteer/", views.signup_volunteer, name="signup_volunteer"),
     path("index-admin/", views.index_admin, name="index_admin"),
     # admin dashboard
@@ -116,3 +118,6 @@ urlpatterns = [
         name="donationcollection_detail",
     ),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
